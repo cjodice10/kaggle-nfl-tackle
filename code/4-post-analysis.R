@@ -87,7 +87,79 @@ defensive_player_preds_agg_f %>% str
 write.csv(defensive_player_preds_agg_f,paste0(getwd(),"/scored-data/defensive_player_preds_agg.csv"),row.names=FALSE)
 
 
+#------------#
+#- ANALYSIS -#
+#------------#
+#- for each person get last score
+defensive_player_recent_score<- defensive_player_preds_agg_f %>%
+  dplyr::group_by(nflId) %>%
+  dplyr::arrange(gameId,playId) %>%
+  dplyr::filter(row_number()==n()) %>%
+  data.frame
+defensive_player_recent_score %>% str
+
+#- get some plots
+defensive_player_playcount<- defensive_player_preds_agg_f %>%
+  dplyr::group_by(nflId) %>%
+  dplyr::summarize(n=n()) %>%
+  data.frame
+defensive_player_playcount %>% str
+
+#- merge to get total play count
+defensive_player_recent_score %>% nrow
+defensive_player_recent_score<- merge(x = defensive_player_recent_score,y=defensive_player_playcount,by="nflId",all.x=TRUE)
+defensive_player_recent_score %>% str
+
+#- top players
+top_players<- defensive_player_recent_score %>% dplyr::filter(n>=61) %>% dplyr::arrange(desc(zscore_final)) %>% head(3) %>% dplyr::select(nflId)
+top_players<- top_players$nflId
+
+#- bottom players
+bottom_players<- defensive_player_recent_score %>% dplyr::filter(n>=61) %>% dplyr::arrange(zscore_final) %>% head(3) %>% dplyr::select(nflId)
+bottom_players<- bottom_players$nflId
+
+#- others
+set.seed(321)
+other_players<- defensive_player_recent_score %>% dplyr::filter(n>=61 & nflId %ni% c(top_players,bottom_players)) %>% dplyr::sample_n(3) %>% dplyr::select(nflId)
+other_players<- other_players$nflId
+
+c(top_players,bottom_players,other_players) %>% unique
 
 
+#- get last 30 plays
+testing<- defensive_player_preds_agg_f %>%
+  dplyr::filter(nflId %in% c(top_players,bottom_players,other_players)) %>%
+  dplyr::group_by(nflId) %>%
+  dplyr::mutate(id = 1:n()) %>%
+  data.frame
+
+testing<- testing %>%
+  dplyr::group_by(nflId) %>%
+  dplyr::filter(id >= (n() - 30)) %>%
+  data.frame
+
+testing<- testing %>% dplyr::group_by(nflId) %>% dplyr::mutate(id=row_number()) %>% data.frame
+testing$displayName %>% unique
+
+#- plot
+ggplot(data=testing %>% dplyr::mutate(nflId=as.character(nflId)), aes(x=id, y=zscore_final, group=displayName)) +
+  geom_line(aes(color=displayName))+
+  geom_point(aes(color=displayName)) +
+  geom_hline(yintercept=c(-0.5,0.5),linetype='dashed')+
+  geom_hline(yintercept=c(-2,2),linetype='dashed')+
+  theme_minimal()
+
+library(gganimate)
+ggplot(data=testing, aes(x=id, y=zscore_final, group=displayName,color=displayName)) +
+  geom_line()+
+  geom_point() +
+  geom_hline(yintercept=c(-0.5,0.5),linetype='dashed')+
+  geom_hline(yintercept=c(-2,2),linetype='dashed')+
+  theme_bw()+
+  transition_reveal(id)
+
+# Save at gif:
+
+anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
 
 
