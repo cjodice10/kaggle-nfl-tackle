@@ -28,7 +28,7 @@ all_pred_probs_f<- merge( x = ex_play_tmp
                          ,by.x = c("gameIdplayId","nflId","frameid_new")
                          ,by.y = c("gameidplayid","reference_nflid","frameid_new")
                          ,all.x=TRUE)
-all_pred_probs_f %>% str
+all_pred_probs_f %>% str 
 
 
 #- if missing, it just means they were on offense or there was a play with no tackle
@@ -150,11 +150,12 @@ ggplot(data=testing %>% dplyr::mutate(nflId=as.character(nflId)), aes(x=id, y=zs
   theme_minimal()
 
 library(gganimate)
-ggplot(data=testing, aes(x=id, y=zscore_final, group=displayName,color=displayName)) +
+ggplot(data=testing, aes(x=id-30, y=zscore_final, group=displayName,color=displayName)) +
   geom_line()+
   geom_point() +
   geom_hline(yintercept=c(-0.5,0.5),linetype='dashed')+
   geom_hline(yintercept=c(-2,2),linetype='dashed')+
+  labs(title="Player Performance - last 30 plays",x="Play (0 is most recent play)",y="Performance")+
   theme_bw()+
   transition_reveal(id)
 

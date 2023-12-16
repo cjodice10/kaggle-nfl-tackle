@@ -20,10 +20,10 @@ source(paste0(my_dir,"/code/helpers.R"))
 ###- READ IN PROCESSED DATA -###
 analytic_weeks_6  <- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-weeks-6.csv"),stringsAsFactors=FALSE)
 analytic_weeks_7  <- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-weeks-7.csv"),stringsAsFactors=FALSE)
-analytic_weeks<- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-weeks-8-9.csv"),stringsAsFactors=FALSE)
+analytic_weeks_8_9<- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-weeks-8-9.csv"),stringsAsFactors=FALSE)
 
 #- bind it
-analytic_weeks<- dplyr::bind_rows(analytic_weeks_6,analytic_weeks_7,analytic_weeks)
+analytic_weeks<- dplyr::bind_rows(analytic_weeks_6,analytic_weeks_7,analytic_weeks_8_9)
 analytic_weeks_6<- NULL
 analytic_weeks_7<- NULL
 analytic_weeks<- NULL
