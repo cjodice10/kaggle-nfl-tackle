@@ -89,7 +89,7 @@ ex_play_tmp<- get_playsWithTackle(ex_play_tmp)
 
 #- subset to frameIds between snap and the tackle (no more, no less)
 frame_ids_start<- get_startend(ex_play_tmp)
-ex_play_tmp<- get_merge_startend(ex_play_tmp,frame_ids_start)
+ex_play_tmp    <- get_merge_startend(ex_play_tmp,frame_ids_start)
 
 #- create an ID
 ex_play_tmp  <- create_gameidplayid(ex_play_tmp)

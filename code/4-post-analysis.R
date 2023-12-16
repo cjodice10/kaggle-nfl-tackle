@@ -64,3 +64,30 @@ defensive_player_preds_agg<- all_pred_probs_f %>%
 summary(defensive_player_preds_agg[,c("play_score","score_final","play_score_prob","score_final_prob")])
 defensive_player_preds_agg %>% str
 
+
+#- merge to get player info
+defensive_player_preds_agg_f<- merge(x = defensive_player_preds_agg
+                                     ,y = players %>% dplyr::select(nflId,position,displayName)
+                                     ,by = "nflId"
+                                     ,all.x=TRUE)
+
+#-----------------------------#
+#- create standardized score -#
+#-----------------------------#
+score_mean<- mean(defensive_player_preds_agg_f$score_final,na.rm=TRUE)
+score_sd<- sd(defensive_player_preds_agg_f$score_final,na.rm=TRUE)
+score_mean;score_sd;
+
+#- zscores
+defensive_player_preds_agg_f$zscore_final<- (defensive_player_preds_agg_f$score_final - score_mean) / score_sd
+
+defensive_player_preds_agg_f %>% str
+
+#- write it out
+write.csv(defensive_player_preds_agg_f,paste0(getwd(),"/scored-data/defensive_player_preds_agg.csv"),row.names=FALSE)
+
+
+
+
+
+
