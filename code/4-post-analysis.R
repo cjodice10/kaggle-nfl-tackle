@@ -20,7 +20,7 @@ source(paste0(my_dir,"/code/helpers.R"))
 `%ni%`<- Negate(`%in%`)
 
 #- bring in model if needed
-#model<- keras::load_model_hdf5(paste0(getwd(),"/model/model-prob-tackle-v2.hdf5"))
+#model<- keras::load_model_hdf5(paste0(getwd(),"/model/model-prob-tackle-v3.hdf5"))
 
 #- bring in other info
 all_pred_probs_f<- merge( x = ex_play_tmp
@@ -81,7 +81,13 @@ score_mean;score_sd;
 #- zscores
 defensive_player_preds_agg_f$zscore_final<- (defensive_player_preds_agg_f$score_final - score_mean) / score_sd
 
-defensive_player_preds_agg_f %>% str
+#- histogram of z-score
+ggplot(defensive_player_preds_agg_f,aes(x=zscore_final)) +
+  geom_histogram(bins=20,color="white",fill="steelblue",alpha=0.7) +
+  geom_vline(xintercept=c(-3,-2,-1,1,2,3),linetype='dashed',color="grey")+
+  labs(title="Final (Z) Score Distribution",x="Score","Freq") +
+  theme_minimal()
+  
 
 #- write it out
 write.csv(defensive_player_preds_agg_f,paste0(getwd(),"/scored-data/defensive_player_preds_agg.csv"),row.names=FALSE)
@@ -97,6 +103,14 @@ defensive_player_recent_score<- defensive_player_preds_agg_f %>%
   dplyr::filter(row_number()==n()) %>%
   data.frame
 defensive_player_recent_score %>% str
+
+#- histogram of recent z-scores
+ggplot(defensive_player_recent_score,aes(x=zscore_final)) +
+  geom_histogram(bins=12,color="white",fill="steelblue",alpha=0.7) +
+  geom_vline(xintercept=c(-2,-1,-0.5,0.5,1,2),linetype='dashed',color="grey")+
+  labs(title="Most Recent Scores",x="Score","Freq") +
+  theme_minimal()
+
 
 #- get some plots
 defensive_player_playcount<- defensive_player_preds_agg_f %>%
@@ -137,6 +151,7 @@ testing<- testing %>%
   dplyr::group_by(nflId) %>%
   dplyr::filter(id >= (n() - 30)) %>%
   data.frame
+testing %>% str
 
 testing<- testing %>% dplyr::group_by(nflId) %>% dplyr::mutate(id=row_number()) %>% data.frame
 testing$displayName %>% unique

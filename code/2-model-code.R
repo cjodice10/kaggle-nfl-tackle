@@ -23,11 +23,10 @@ analytic_weeks_7  <- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-wee
 analytic_weeks_8_9<- read.csv(paste0(getwd(),"/data/02-intermediate/analytic-weeks-8-9.csv"),stringsAsFactors=FALSE)
 
 #- bind it
-analytic_weeks<- dplyr::bind_rows(analytic_weeks_6,analytic_weeks_7,analytic_weeks_8_9)
-analytic_weeks_6<- NULL
-analytic_weeks_7<- NULL
-analytic_weeks<- NULL
-
+analytic_weeks    <- dplyr::bind_rows(analytic_weeks_6,analytic_weeks_7,analytic_weeks_8_9)
+analytic_weeks_6  <- NULL
+analytic_weeks_7  <- NULL
+analytic_weeks_8_9<- NULL
 
 ##- create new frame ids, 1 through n for each play
 analytic_weeks<- analytic_weeks %>%
@@ -130,6 +129,11 @@ dev_transf <- predict(preProcValues, dev_df[,c(var_2_use)])
 #- val
 val_transf <- predict(preProcValues, val_df[,c(var_2_use)])
 
+#- save preProcess
+saveRDS(preProcValues, paste0(getwd(),"/model/preProcValues.rds"))
+#- load it
+#readRDS(paste0(getwd(),"/model/preProcValues.rds"))
+
 
 #- bring back key variables
 #- dev
@@ -215,10 +219,7 @@ model_history<- model %>% fit(
   ,shuffle = FALSE
 )
 
-plot(model_history)
-
-#- save model
-save_model_hdf5(model,paste0(getwd(),"/model/model-prob-tackle-v2.hdf5"))
+plot(model_history,title='Metrics During Training')
 
 #- get predictions
 
@@ -250,8 +251,10 @@ val_aggr_roc<-pROC::roc(val_df_aggr_to_player_play$dv,val_df_aggr_to_player_play
 plot(dev_aggr_roc, print.thres = "best",main='Dev - Player/Play Level')
 plot(val_aggr_roc, print.thres = "best",main='Val - Player/Play Level')
 
-
 #- bind dev and val predictions
 all_pred_probs<- dplyr::bind_rows(dev_pred_probs,val_pred_probs)
 all_pred_probs %>% str %>% print
+
+#- save model
+save_model_hdf5(model,paste0(getwd(),"/model/model-prob-tackle-v3.hdf5"))
 
