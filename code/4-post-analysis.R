@@ -175,7 +175,17 @@ ggplot(data=testing, aes(x=id-30, y=zscore_final, group=displayName,color=displa
   transition_reveal(id)
 
 # Save at gif:
-
 anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
+
+#---------------------------#
+#- frame-by-frame analysis -#
+#---------------------------#
+all_pred_probs_f$gameIdplayId %>% unique %>% tail(10)
+get_plot_anim(ingame_id=2022102700,inplay_id=1700)
+get_plot_anim(ingame_id=2022102700,inplay_id=201)
+get_plot_anim(ingame_id=2022102700,inplay_id=1438)
+get_plot_anim(ingame_id=2022102700,inplay_id=1203)
+get_plot_anim(ingame_id=2022110700,inplay_id=80)
+get_plot_anim(ingame_id=2022110700,inplay_id=929)
 
 
