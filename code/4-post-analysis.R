@@ -103,6 +103,7 @@ defensive_player_recent_score<- defensive_player_preds_agg_f %>%
   dplyr::filter(row_number()==n()) %>%
   data.frame
 defensive_player_recent_score %>% str
+defensive_player_recent_score %>% View
 
 #- histogram of recent z-scores
 p<- ggplot() +
@@ -114,6 +115,7 @@ p<- ggplot() +
   #geom_vline(xintercept=c(-2,-1,-0.5,0.5,1,2),linetype='dashed',color="grey")+
   labs(title="End of Week 9 - Most Recent Scores",x="Score",y="Frequency") +
   theme_minimal()
+p
 png(paste0(getwd(),"/pictures/most-recent-scores.png"))
 print(p)
 dev.off()
