@@ -105,12 +105,18 @@ defensive_player_recent_score<- defensive_player_preds_agg_f %>%
 defensive_player_recent_score %>% str
 
 #- histogram of recent z-scores
-ggplot(defensive_player_recent_score,aes(x=zscore_final)) +
-  geom_histogram(bins=12,color="white",fill="steelblue",alpha=0.7) +
-  geom_vline(xintercept=c(-2,-1,-0.5,0.5,1,2),linetype='dashed',color="grey")+
-  labs(title="Most Recent Scores",x="Score","Freq") +
+p<- ggplot() +
+  geom_rect(aes(xmin = -2, xmax = -1, ymin = 0, ymax = Inf),fill = "orange", alpha = 0.1) +
+  geom_rect(aes(xmin = -Inf, xmax = -2, ymin = 0, ymax = Inf),fill = "orange", alpha = 0.3) +
+  geom_rect(aes(xmin = 1, xmax = 2, ymin = 0, ymax = Inf),fill = "green", alpha = 0.1) +
+  geom_rect(aes(xmin = 2, xmax = Inf, ymin = 0, ymax = Inf),fill = "green", alpha = 0.3) +
+  geom_histogram(aes(x=defensive_player_recent_score$zscore_final),bins=12,color="white",fill="steelblue",alpha=0.9) +
+  #geom_vline(xintercept=c(-2,-1,-0.5,0.5,1,2),linetype='dashed',color="grey")+
+  labs(title="End of Week 9 - Most Recent Scores",x="Score",y="Frequency") +
   theme_minimal()
-
+png(paste0(getwd(),"/pictures/most-recent-scores.png"))
+print(p)
+dev.off()
 
 #- get some plots
 defensive_player_playcount<- defensive_player_preds_agg_f %>%
