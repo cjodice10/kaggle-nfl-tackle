@@ -188,4 +188,6 @@ get_plot_anim(ingame_id=2022102700,inplay_id=1203)
 get_plot_anim(ingame_id=2022110700,inplay_id=80)
 get_plot_anim(ingame_id=2022110700,inplay_id=929)
 
+# Save at gif:
+anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
 

@@ -444,7 +444,7 @@ get_plot_anim<- function(ingame_id,inplay_id){
   dff<- df %>% dplyr::filter(club=='football')
   
   p<- ggplot(data=df, aes(x=std_X,y=std_Y))+
-    gg_field(direction="horiz") +
+    gg_field(direction="horiz",yardmin=max(min(df$std_X)-10,0),yardmax=min(max(df$std_X)+10,120)) +
     geom_point(data=df1,
                aes(x = std_X, y = std_Y,fill = club, color = club), shape = 21, alpha = 0.9, size = round(df1$prob_tackle_scale,2)) +
     geom_point(data=df2,
@@ -464,7 +464,7 @@ get_plot_anim<- function(ingame_id,inplay_id){
   gganimate::animate(plot=p,fps = 5, nframe = play_len)
   
   #Save
-  anim_save(paste0("anim_play_",ingame_id,"_",inplay_id,".gif"), animation = last_animation())
+  anim_save(paste0(getwd(),"/pictures/anim_play_",ingame_id,"_",inplay_id,".gif"), animation = last_animation())
 }
 
 
