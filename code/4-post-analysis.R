@@ -165,22 +165,26 @@ testing<- testing %>% dplyr::group_by(nflId) %>% dplyr::mutate(id=row_number()) 
 testing$displayName %>% unique
 
 #- plot
-ggplot(data=testing %>% dplyr::mutate(nflId=as.character(nflId)), aes(x=id, y=zscore_final, group=displayName)) +
+ggplot(data=testing %>% dplyr::mutate(nflId=as.character(nflId)), aes(x=id-30, y=zscore_final, group=displayName)) +
   geom_line(aes(color=displayName))+
   geom_point(aes(color=displayName)) +
   geom_hline(yintercept=c(-0.5,0.5),linetype='dashed')+
   geom_hline(yintercept=c(-2,2),linetype='dashed')+
+  labs(title="UTPM for last 30 plays",x="Play (0 is most recent)",y="UTPM")+
   theme_minimal()
 
 library(gganimate)
-ggplot(data=testing, aes(x=id-30, y=zscore_final, group=displayName,color=displayName)) +
-  geom_line()+
-  geom_point() +
-  geom_hline(yintercept=c(-0.5,0.5),linetype='dashed')+
-  geom_hline(yintercept=c(-2,2),linetype='dashed')+
-  labs(title="Player Performance - last 30 plays",x="Play (0 is most recent play)",y="Performance")+
-  theme_bw()+
+ggplot() +
+  geom_rect(aes(xmin = -30, xmax = 0, ymin = -2, ymax = -Inf),fill = "orange", alpha = 0.2) +
+  geom_rect(aes(xmin = -30, xmax = 0, ymin = -1, ymax = -2),fill = "orange", alpha = 0.1) +
+  geom_rect(aes(xmin = -30, xmax = 0, ymin = 1, ymax = 2),fill = "green", alpha = 0.1) +
+  geom_rect(aes(xmin = -30, xmax = 0, ymin = 2, ymax = Inf),fill = "green", alpha = 0.2) +
+  geom_line(data=testing,aes(x=id-31, y=zscore_final,color=displayName))+
+  geom_point(data=testing,aes(x=id-31, y=zscore_final,color=displayName)) +
+  labs(title="Player UTPM - last 30 plays",x="Play (0 is most recent play)",y="UTPM")+
+  theme_minimal() +
   transition_reveal(id)
+
 
 # Save at gif:
 anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))

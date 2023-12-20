@@ -221,6 +221,7 @@ model_history<- model %>% fit(
 
 plot(model_history,title='Metrics During Training')
 
+model_history
 #- get predictions
 
 #- DEV
@@ -248,13 +249,24 @@ val_df_aggr_to_player_play<- aggr_to_player_play(val_pred_probs,has_dv=TRUE)
 dev_aggr_roc<-pROC::roc(dev_df_aggr_to_player_play$dv,dev_df_aggr_to_player_play$prob_tackle)
 val_aggr_roc<-pROC::roc(val_df_aggr_to_player_play$dv,val_df_aggr_to_player_play$prob_tackle)
 
-plot(dev_aggr_roc, print.thres = "best",main='Dev - Player/Play Level')
-plot(val_aggr_roc, print.thres = "best",main='Val - Player/Play Level')
+p_dev<-plot(dev_aggr_roc, ,main=paste0('Dev - Player/Play Level - AUROC: ',round(dev_aggr_roc$auc,3)))
+p_val<-plot(val_aggr_roc, ,main=paste0('Val - Player/Play Level - AUROC: ',round(val_aggr_roc$auc,3)))
 
 #- bind dev and val predictions
 all_pred_probs<- dplyr::bind_rows(dev_pred_probs,val_pred_probs)
 all_pred_probs %>% str %>% print
 
+#- assign predicted class
+dev_df_aggr_to_player_play<- get_pred_class(dev_df_aggr_to_player_play,0.95)
+val_df_aggr_to_player_play<- get_pred_class(val_df_aggr_to_player_play,0.95)
+
+dev_df_aggr_to_player_play %>% get_metrics
+val_df_aggr_to_player_play %>% get_metrics
+
 #- save model
 save_model_hdf5(model,paste0(getwd(),"/model/model-prob-tackle-v3.hdf5"))
+
+
+dev_df_aggr_to_player_play %>% str
+dev_df_aggr_to_player_play %>% dplyr::group_by(dv,pred_class) %>% tally
 

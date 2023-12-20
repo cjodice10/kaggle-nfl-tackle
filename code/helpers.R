@@ -430,6 +430,23 @@ aggr_to_player_play<- function(df,has_dv=FALSE){
   return(dff)
 }
 
+#- get pred class
+get_pred_class<-function(indf,inthr){
+  indf$pred_class<- ifelse(indf$prob_tackle>=inthr,1,0)
+  return(indf)
+}
+
+
+#- get metrics
+get_metrics<- function(indf){
+  tbl<- table(indf$dv,indf$pred_class)
+  list( roc      = round(as.numeric(pROC::roc(indf$dv,indf$prob_tackle)$auc),2)
+        ,recall   = round(tbl[4] / (tbl[4] + tbl[2]),2)
+        ,precision= round(tbl[4] / (tbl[4] + tbl[3]),2)
+  )
+}
+
+
 
 #- annimation plot of play
 get_plot_anim<- function(ingame_id,inplay_id){
