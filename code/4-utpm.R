@@ -78,6 +78,9 @@ score_mean<- mean(defensive_player_preds_agg_f$score_final,na.rm=TRUE)
 score_sd<- sd(defensive_player_preds_agg_f$score_final,na.rm=TRUE)
 score_mean;score_sd;
 
+#-------------------------------------#
+#- Ultimate Tackle Performanc Metric -#
+#-------------------------------------#
 #- zscores
 defensive_player_preds_agg_f$zscore_final<- (defensive_player_preds_agg_f$score_final - score_mean) / score_sd
 
@@ -213,7 +216,4 @@ anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
 all_pred_probs_f %>% str
 
 mydf<- all_pred_probs_f[which(all_pred_probs_f$playId==201 & all_pred_probs_f$gameId==2022102700),]
-
-mydf %>% View
-
 

@@ -489,6 +489,59 @@ get_plot_anim<- function(ingame_id,inplay_id){
   anim_save(paste0(getwd(),"/pictures/anim_play_",ingame_id,"_",inplay_id,".gif"), animation = last_animation())
 }
 
+#- get_mk
+get_mk<- function(indf){
+  df<- indf %>%
+    dplyr::group_by(nflId) %>%
+    dplyr::mutate(id = 1:n())
+  
+  message("Original nrow:",nrow(df))
+  
+  df<- df %>%
+    dplyr::group_by(nflId) %>%
+    dplyr::filter(id>=30) %>%
+    dplyr::filter(row_number() >= (n() - 30)) %>%
+    dplyr::arrange(nflId,desc(id)) 
+  
+  df<- df%>%
+    dplyr::group_by(nflId) %>%
+    dplyr::mutate(newid=31-row_number()) %>%
+    dplyr::arrange(nflId,newid) %>%
+    data.frame
+  
+  #- must have at least 20 plays
+  df_20pl<- df %>% 
+    dplyr::group_by(nflId) %>%
+    dplyr::summarise(mintmp = min(newid)) %>%
+    dplyr::filter(mintmp <=10) %>%  #- 30-20=10
+    data.frame
+  
+  df<- df %>% dplyr::filter(nflId %in% df_20pl$nflId) %>% dplyr::select(nflId,newid,gameDate,gameId,playId,zscore_final) %>% data.frame
+  df<- df %>% dplyr::group_by(nflId) %>% dplyr::arrange(nflId,newid) %>% data.frame
+  df<- df %>% dplyr::group_by(nflId) %>% slice(tail(row_number(), 20)) %>% data.frame
+  message("At least 20 plays unique nflIds: ",df$nflId %>% unique %>% length)
+  
+  #- split df by nflId
+  df_split<-split(df$zscore_final, df$nflId)
+  df_split<- lapply(df_split ,function(x) {data.frame(x=x,y=1:length(x))})
+  
+  mk.test <- lapply(df_split, function(x) Kendall(x$x,x$y))
+  mk.test.unlist<-lapply(mk.test,function(x) data.frame(tau=x$tau,sl=x$sl,S=x$S,D=x$D,varS=x$varS))
+  
+  mk.test.unlist<-lapply(mk.test,function(x) data.frame(tau=x$tau,sl=x$sl,S=x$S,D=x$D,varS=x$varS))
+  mk.test.unlist %>% head
+  
+  nfl_ids<-names(mk.test.unlist) %>% stringr::str_remove(.,"X") %>% as.numeric
+  mk_df<- mk.test.unlist %>% dplyr::bind_rows()
+  mk_df$nflId<- nfl_ids
+  
+  #assign
+  mk_df$Trend<-ifelse(mk_df$tau>0 & mk_df$sl<0.001,1,
+                      ifelse(mk_df$tau<0 & mk_df$sl<0.001,-1,0))
+  
+  return(mk_df)
+}
+
 
 
 #- for below function -#
