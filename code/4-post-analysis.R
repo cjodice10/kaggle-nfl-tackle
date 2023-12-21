@@ -35,7 +35,7 @@ all_pred_probs_f %>% str
 all_pred_probs_f$prob_tackle<- ifelse(is.na(all_pred_probs_f$prob_tackle),0,all_pred_probs_f$prob_tackle)
 
 #- for plotting, scale the probs
-all_pred_probs_f$prob_tackle_scale<- (all_pred_probs_f$prob_tackle+0.5) *3
+all_pred_probs_f$prob_tackle_scale<- (all_pred_probs_f$prob_tackle+1.5) *5
 
 #- merge with games
 all_pred_probs_f<- merge( x=all_pred_probs_f
@@ -202,6 +202,11 @@ get_plot_anim(ingame_id=2022110700,inplay_id=80)
 get_plot_anim(ingame_id=2022102700,inplay_id=1438)
 get_plot_anim(ingame_id=2022110700,inplay_id=929)
 
+
+get_plot_anim(ingame_id=2022110700,inplay_id=80)
+
 # Save at gif:
 anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
+
+all_pred_probs_f %>% str
 

@@ -468,8 +468,8 @@ get_plot_anim<- function(ingame_id,inplay_id){
                aes(x = std_X, y = std_Y,fill = club, color = club), shape = 21, alpha = 0.9, size = round(df2$prob_tackle_scale,2)) +
     geom_point(data=dff,
                aes(x = std_X, y = std_Y,fill = club, color = club), shape = 18, alpha = 0.9, size = 3) +
-    geom_text(size=2, data=df1,aes(x = std_X, y = std_Y,label=jerseyNumber))+
-    geom_text(size=2, data=df2,aes(x = std_X, y = std_Y,label=jerseyNumber))+
+    geom_text(size=2.5, data=df1,aes(x = std_X, y = std_Y,label=round(prob_tackle,2)))+
+    geom_text(size=2, data=df2,aes(x = std_X, y = std_Y,label=""))+
     #geom_spoke(aes(angle = df$std_Dir_rad)                   , radius = df$s/2, arrow=arrow(length = unit(0.2,"cm")),alpha=0.3)+
     #geom_spoke(aes(angle = df$std_Orientation_rad,color=club), radius = 2   , arrow=arrow(length = unit(0.2,"cm")),alpha=0.5)+
     theme(legend.position='none') +
