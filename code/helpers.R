@@ -455,9 +455,14 @@ get_plot_anim<- function(ingame_id,inplay_id){
     dplyr::arrange(frameId,nflId)
   teams<- df$club %>% unique
   teams<- teams[teams %ni% 'football']
+  def_team<- df$defensiveTeam %>% unique
   
-  df1<- df %>% dplyr::filter(club==teams[1])
-  df2<- df %>% dplyr::filter(club==teams[2])
+  #df1<- df %>% dplyr::filter(club==teams[1])
+  #df2<- df %>% dplyr::filter(club==teams[2])
+  
+  df1<- df %>% dplyr::filter(club %in% def_team)
+  df2<- df %>% dplyr::filter(club %ni% def_team)
+  
   dff<- df %>% dplyr::filter(club=='football')
   
   p<- ggplot(data=df, aes(x=std_X,y=std_Y))+

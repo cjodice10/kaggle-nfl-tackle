@@ -205,8 +205,15 @@ get_plot_anim(ingame_id=2022110700,inplay_id=929)
 
 get_plot_anim(ingame_id=2022110700,inplay_id=80)
 
+get_plot_anim(ingame_id=2022102700,inplay_id=201)
+
 # Save at gif:
 anim_save(paste0(getwd(),"/pictures/player-performance-example.gif"))
 
 all_pred_probs_f %>% str
+
+mydf<- all_pred_probs_f[which(all_pred_probs_f$playId==201 & all_pred_probs_f$gameId==2022102700),]
+
+mydf %>% View
+
 
