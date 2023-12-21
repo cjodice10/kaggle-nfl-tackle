@@ -164,6 +164,7 @@ val_unique_combinations<- val_transf$gameidplayidnflid %>% unique
 
 message("Max frames: ",num_frames)
 
+nrow(val_x)
 
 #- DEV
 dev_x <- dev_transf[,var_2_use] %>% matrix %>% simplify2array
@@ -173,6 +174,7 @@ dev_y <- dev_transf[,"dv"] %>% to_categorical
 val_x <- val_transf[,var_2_use] %>% matrix %>% simplify2array
 val_y <- val_transf[,"dv"] %>% to_categorical
 
+prop.table(table(dev_transf$dv))
 
 #- weights
 #- 1's:   0.5 / (78419/1173499) = 7.5
