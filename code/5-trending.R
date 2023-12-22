@@ -1,10 +1,32 @@
 ?MannKendall
 
+defensive_player_preds_agg_f %>% dplyr::filter(nflId==35452) %>% View
+
 #- get Trending Component
 trending<- get_mk(defensive_player_preds_agg_f)
 table(trending$Trend)
 trending %>% dplyr::arrange(tau) %>% head
 trending %>% dplyr::arrange(desc(tau)) %>% dplyr::filter(Trend==1) %>% head
+
+#- merge with recent score
+defensive_player_recent_score %>% str
+utpm_trending<- merge (x = defensive_player_recent_score %>% dplyr::select(nflId,zscore_final,displayName)
+                      ,y = trending %>% dplyr::select(nflId,Trend)
+                      ,by="nflId"
+                      ,all.x=TRUE) %>%
+  dplyr::mutate(Trend = ifelse(Trend==-1,"Down",ifelse(Trend==1,"Up","Steady"))
+                ,UTPM = zscore_final
+                ,UTPM_cat = ifelse(zscore_final < (-2), "Poor",
+                                   ifelse(zscore_final < (-1), "Below average",
+                                          ifelse(zscore_final < 1, "Average",
+                                                 ifelse(zscore_final < 2, "Above average",
+                                                        ifelse(zscore_final<100, "Excellent",NA)))))
+                ) %>%
+  dplyr::select(-zscore_final) %>%
+  dplyr::filter(!is.na(UTPM))
+utpm_trending %>% str
+utpm_trending %>% View
+table(utpm_trending$UTPM_cat,utpm_trending$Trend,exclude=NULL)
 
 #- look at some players trending
 
@@ -60,3 +82,5 @@ ggplot() +
 
 # Save at gif:
 anim_save(paste0(getwd(),"/pictures/utpm-trend-example.gif"))
+
+trending_downup %>% View

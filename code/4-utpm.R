@@ -116,7 +116,7 @@ p<- ggplot() +
   geom_rect(aes(xmin = 2, xmax = Inf, ymin = 0, ymax = Inf),fill = "green", alpha = 0.3) +
   geom_histogram(aes(x=defensive_player_recent_score$zscore_final),bins=12,color="white",fill="steelblue",alpha=0.9) +
   #geom_vline(xintercept=c(-2,-1,-0.5,0.5,1,2),linetype='dashed',color="grey")+
-  labs(title="End of Week 9 - Most Recent Scores",x="Score",y="Frequency") +
+  labs(title="End of Week 9 - Most Recent Scores",x="UTPM",y="Frequency") +
   theme_minimal()
 p
 png(paste0(getwd(),"/pictures/most-recent-scores.png"))
