@@ -1,12 +1,6 @@
-?MannKendall
-
-defensive_player_preds_agg_f %>% dplyr::filter(nflId==35452) %>% View
-
 #- get Trending Component
 trending<- get_mk(defensive_player_preds_agg_f)
 table(trending$Trend)
-trending %>% dplyr::arrange(tau) %>% head
-trending %>% dplyr::arrange(desc(tau)) %>% dplyr::filter(Trend==1) %>% head
 
 #- merge with recent score
 defensive_player_recent_score %>% str
@@ -28,7 +22,10 @@ utpm_trending %>% str
 utpm_trending %>% View
 table(utpm_trending$UTPM_cat,utpm_trending$Trend,exclude=NULL)
 
-#- look at some players trending
+
+#---------------------------------#
+#- look at some players trending -#
+#---------------------------------#
 
 #- trending down
 trending_down<- defensive_player_preds_agg_f %>% dplyr::filter(nflId %in% trending[which(trending$Trend==-1),]$nflId)
