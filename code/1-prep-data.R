@@ -14,11 +14,11 @@ library(keras)
 library(tensorflow)
 library(pROC)
 
-#- source helpers
-source(paste0(my_dir,"/code/helpers.R"))
-
 #- dir
 my_dir<- getwd()
+
+#- source helpers
+source(paste0(my_dir,"/code/helpers.R"))
 
 #- bring in data
 games          <- read.csv(paste0(my_dir,"/data/01-raw/games.csv")  ,stringsAsFactors=FALSE)

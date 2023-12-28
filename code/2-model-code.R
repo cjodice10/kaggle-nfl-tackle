@@ -120,7 +120,12 @@ dv<- "dv_f"
 #- PRE-PROCESSING -#
 #------------------#
 #- center and scale
-preProcValues <- preProcess(dev_df[,var_2_use], method = "range")
+#- preProcValues <- preProcess(dev_df[,var_2_use], method = "range")
+#- save preProcess
+#- saveRDS(preProcValues, paste0(getwd(),"/model/preProcValues.rds"))
+
+#- load it
+preProcValues<- readRDS(paste0(my_dir,"/model/preProcValues.rds"))
 
 #- transform it
 #- dev
@@ -128,11 +133,6 @@ dev_transf <- predict(preProcValues, dev_df[,c(var_2_use)])
 
 #- val
 val_transf <- predict(preProcValues, val_df[,c(var_2_use)])
-
-#- save preProcess
-saveRDS(preProcValues, paste0(getwd(),"/model/preProcValues.rds"))
-#- load it
-#readRDS(paste0(getwd(),"/model/preProcValues.rds"))
 
 
 #- bring back key variables
@@ -163,8 +163,6 @@ val_unique_players <- val_transf$reference_nflid %>% unique %>% sort
 val_unique_combinations<- val_transf$gameidplayidnflid %>% unique
 
 message("Max frames: ",num_frames)
-
-nrow(val_x)
 
 #- DEV
 dev_x <- dev_transf[,var_2_use] %>% matrix %>% simplify2array
@@ -253,6 +251,8 @@ val_aggr_roc<-pROC::roc(val_df_aggr_to_player_play$dv,val_df_aggr_to_player_play
 
 p_dev<-plot(dev_aggr_roc, ,main=paste0('Dev - Player/Play Level - AUROC: ',round(dev_aggr_roc$auc,3)))
 p_val<-plot(val_aggr_roc, ,main=paste0('Val - Player/Play Level - AUROC: ',round(val_aggr_roc$auc,3)))
+p_dev
+p_val
 
 #- bind dev and val predictions
 all_pred_probs<- dplyr::bind_rows(dev_pred_probs,val_pred_probs)
