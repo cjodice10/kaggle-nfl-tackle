@@ -13,6 +13,7 @@ library(caret)
 library(keras)
 library(tensorflow)
 library(pROC)
+library(tensorflow)
 
 #- source helpers
 source(paste0(my_dir,"/code/helpers.R"))
