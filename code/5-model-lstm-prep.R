@@ -14,7 +14,7 @@ dev_lstm_x<- dev_transf %>%
 dev_lstm_x %>% str #1,173,499
 
 #- create unique ids for testing
-unique_myids<- dev_lstm_x$myid %>% unique %>% head(50)
+unique_myids<- dev_lstm_x$myid %>% unique %>% head(500)
 
 #ingameids<- c("2022101300 - 1000","2022101300 - 1000","2022101300 - 1021","2022101300 - 1088")
 #innflids<- c(41599,46077,41595,54504)
@@ -44,102 +44,102 @@ x_df_pad<-dev_lstm_x %>%
   dplyr::select(-gameidplayid,-reference_nflid) %>%
   tidyr::complete(myid
                   , frameid_new = 1:maxframes
-                  , fill = list(	   diff_orien_d1 	=0
-                                  ,	 relative_distance_d2 	=0
-                                  ,	 diff_direc_d2 	=0
-                                  ,	 relative_angle_d3 	=0
-                                  ,	 rel_ht_d3 	=0
-                                  ,	 diff_speed_d4 	=0
-                                  ,	 rel_wt_d4 	=0
-                                  ,	 diff_accel_d5 	=0
-                                  ,	 rel_bmi_d5 	=0
-                                  ,	 diff_orien_o1 	=0
-                                  ,	 relative_distance_o2 	=0
-                                  ,	 diff_direc_o2 	=0
-                                  ,	 relative_angle_o3 	=0
-                                  ,	 rel_ht_o3 	=0
-                                  ,	 diff_speed_o4 	=0
-                                  ,	 rel_wt_o4 	=0
-                                  ,	 diff_accel_o5 	=0
-                                  ,	 rel_bmi_o5 	=0
-                                  ,	 gameidplayid 	=0
-                                  ,	 relative_distance_d1 	=0
-                                  ,	 diff_direc_d1 	=0
-                                  ,	 relative_angle_d2 	=0
-                                  ,	 rel_ht_d2 	=0
-                                  ,	 diff_speed_d3 	=0
-                                  ,	 rel_wt_d3 	=0
-                                  ,	 diff_accel_d4 	=0
-                                  ,	 rel_bmi_d4 	=0
-                                  ,	 diff_orien_d5 	=0
-                                  ,	 relative_distance_o1 	=0
-                                  ,	 diff_direc_o1 	=0
-                                  ,	 relative_angle_o2 	=0
-                                  ,	 rel_ht_o2 	=0
-                                  ,	 diff_speed_o3 	=0
-                                  ,	 rel_wt_o3 	=0
-                                  ,	 diff_accel_o4 	=0
-                                  ,	 rel_bmi_o4 	=0
-                                  ,	 diff_orien_o5 	=0
-                                  ,	 relative_distance_football 	=0
-                                  ,	 relative_angle_d1 	=0
-                                  ,	 rel_ht_d1 	=0
-                                  ,	 diff_speed_d2 	=0
-                                  ,	 rel_wt_d2 	=0
-                                  ,	 diff_accel_d3 	=0
-                                  ,	 rel_bmi_d3 	=0
-                                  ,	 diff_orien_d4 	=0
-                                  ,	 relative_distance_d5 	=0
-                                  ,	 diff_direc_d5 	=0
-                                  ,	 relative_angle_o1 	=0
-                                  ,	 rel_ht_o1 	=0
-                                  ,	 diff_speed_o2 	=0
-                                  ,	 rel_wt_o2 	=0
-                                  ,	 diff_accel_o3 	=0
-                                  ,	 rel_bmi_o3 	=0
-                                  ,	 diff_orien_o4 	=0
-                                  ,	 relative_distance_o5 	=0
-                                  ,	 diff_direc_o5 	=0
-                                  ,	 relative_angle_football 	=0
-                                  ,	 dv 	=0
-                                  ,	 diff_speed_d1 	=0
-                                  ,	 rel_wt_d1 	=0
-                                  ,	 diff_accel_d2 	=0
-                                  ,	 rel_bmi_d2 	=0
-                                  ,	 diff_orien_d3 	=0
-                                  ,	 relative_distance_d4 	=0
-                                  ,	 diff_direc_d4 	=0
-                                  ,	 relative_angle_d5 	=0
-                                  ,	 rel_ht_d5 	=0
-                                  ,	 diff_speed_o1 	=0
-                                  ,	 rel_wt_o1 	=0
-                                  ,	 diff_accel_o2 	=0
-                                  ,	 rel_bmi_o2 	=0
-                                  ,	 diff_orien_o3 	=0
-                                  ,	 relative_distance_o4 	=0
-                                  ,	 diff_direc_o4 	=0
-                                  ,	 relative_angle_o5 	=0
-                                  ,	 rel_ht_o5 	=0
-                                  ,	 diff_speed_football 	=0
-                                  ,	 diff_accel_d1 	=0
-                                  ,	 rel_bmi_d1 	=0
-                                  ,	 diff_orien_d2 	=0
-                                  ,	 relative_distance_d3 	=0
-                                  ,	 diff_direc_d3 	=0
-                                  ,	 relative_angle_d4 	=0
-                                  ,	 rel_ht_d4 	=0
-                                  ,	 diff_speed_d5 	=0
-                                  ,	 rel_wt_d5 	=0
-                                  ,	 diff_accel_o1 	=0
-                                  ,	 rel_bmi_o1 	=0
-                                  ,	 diff_orien_o2 	=0
-                                  ,	 relative_distance_o3 	=0
-                                  ,	 diff_direc_o3 	=0
-                                  ,	 relative_angle_o4 	=0
-                                  ,	 rel_ht_o4 	=0
-                                  ,	 diff_speed_o5 	=0
-                                  ,	 rel_wt_o5 	=0
-                                  ,	 diff_accel_football 	=0
+                  , fill = list(	   diff_orien_d1 	 =(-1)
+                                  ,	 relative_distance_d2 	 =(-1)
+                                  ,	 diff_direc_d2 	 =(-1)
+                                  ,	 relative_angle_d3 	 =(-1)
+                                  ,	 rel_ht_d3 	 =(-1)
+                                  ,	 diff_speed_d4 	 =(-1)
+                                  ,	 rel_wt_d4 	 =(-1)
+                                  ,	 diff_accel_d5 	 =(-1)
+                                  ,	 rel_bmi_d5 	 =(-1)
+                                  ,	 diff_orien_o1 	 =(-1)
+                                  ,	 relative_distance_o2 	 =(-1)
+                                  ,	 diff_direc_o2 	 =(-1)
+                                  ,	 relative_angle_o3 	 =(-1)
+                                  ,	 rel_ht_o3 	 =(-1)
+                                  ,	 diff_speed_o4 	 =(-1)
+                                  ,	 rel_wt_o4 	 =(-1)
+                                  ,	 diff_accel_o5 	 =(-1)
+                                  ,	 rel_bmi_o5 	 =(-1)
+                                  ,	 gameidplayid 	 =(-1)
+                                  ,	 relative_distance_d1 	 =(-1)
+                                  ,	 diff_direc_d1 	 =(-1)
+                                  ,	 relative_angle_d2 	 =(-1)
+                                  ,	 rel_ht_d2 	 =(-1)
+                                  ,	 diff_speed_d3 	 =(-1)
+                                  ,	 rel_wt_d3 	 =(-1)
+                                  ,	 diff_accel_d4 	 =(-1)
+                                  ,	 rel_bmi_d4 	 =(-1)
+                                  ,	 diff_orien_d5 	 =(-1)
+                                  ,	 relative_distance_o1 	 =(-1)
+                                  ,	 diff_direc_o1 	 =(-1)
+                                  ,	 relative_angle_o2 	 =(-1)
+                                  ,	 rel_ht_o2 	 =(-1)
+                                  ,	 diff_speed_o3 	 =(-1)
+                                  ,	 rel_wt_o3 	 =(-1)
+                                  ,	 diff_accel_o4 	 =(-1)
+                                  ,	 rel_bmi_o4 	 =(-1)
+                                  ,	 diff_orien_o5 	 =(-1)
+                                  ,	 relative_distance_football 	 =(-1)
+                                  ,	 relative_angle_d1 	 =(-1)
+                                  ,	 rel_ht_d1 	 =(-1)
+                                  ,	 diff_speed_d2 	 =(-1)
+                                  ,	 rel_wt_d2 	 =(-1)
+                                  ,	 diff_accel_d3 	 =(-1)
+                                  ,	 rel_bmi_d3 	 =(-1)
+                                  ,	 diff_orien_d4 	 =(-1)
+                                  ,	 relative_distance_d5 	 =(-1)
+                                  ,	 diff_direc_d5 	 =(-1)
+                                  ,	 relative_angle_o1 	 =(-1)
+                                  ,	 rel_ht_o1 	 =(-1)
+                                  ,	 diff_speed_o2 	 =(-1)
+                                  ,	 rel_wt_o2 	 =(-1)
+                                  ,	 diff_accel_o3 	 =(-1)
+                                  ,	 rel_bmi_o3 	 =(-1)
+                                  ,	 diff_orien_o4 	 =(-1)
+                                  ,	 relative_distance_o5 	 =(-1)
+                                  ,	 diff_direc_o5 	 =(-1)
+                                  ,	 relative_angle_football 	 =(-1)
+                                  ,	 dv 	 =0
+                                  ,	 diff_speed_d1 	 =(-1)
+                                  ,	 rel_wt_d1 	 =(-1)
+                                  ,	 diff_accel_d2 	 =(-1)
+                                  ,	 rel_bmi_d2 	 =(-1)
+                                  ,	 diff_orien_d3 	 =(-1)
+                                  ,	 relative_distance_d4 	 =(-1)
+                                  ,	 diff_direc_d4 	 =(-1)
+                                  ,	 relative_angle_d5 	 =(-1)
+                                  ,	 rel_ht_d5 	 =(-1)
+                                  ,	 diff_speed_o1 	 =(-1)
+                                  ,	 rel_wt_o1 	 =(-1)
+                                  ,	 diff_accel_o2 	 =(-1)
+                                  ,	 rel_bmi_o2 	 =(-1)
+                                  ,	 diff_orien_o3 	 =(-1)
+                                  ,	 relative_distance_o4 	 =(-1)
+                                  ,	 diff_direc_o4 	 =(-1)
+                                  ,	 relative_angle_o5 	 =(-1)
+                                  ,	 rel_ht_o5 	 =(-1)
+                                  ,	 diff_speed_football 	 =(-1)
+                                  ,	 diff_accel_d1 	 =(-1)
+                                  ,	 rel_bmi_d1 	 =(-1)
+                                  ,	 diff_orien_d2 	 =(-1)
+                                  ,	 relative_distance_d3 	 =(-1)
+                                  ,	 diff_direc_d3 	 =(-1)
+                                  ,	 relative_angle_d4 	 =(-1)
+                                  ,	 rel_ht_d4 	 =(-1)
+                                  ,	 diff_speed_d5 	 =(-1)
+                                  ,	 rel_wt_d5 	 =(-1)
+                                  ,	 diff_accel_o1 	 =(-1)
+                                  ,	 rel_bmi_o1 	 =(-1)
+                                  ,	 diff_orien_o2 	 =(-1)
+                                  ,	 relative_distance_o3 	 =(-1)
+                                  ,	 diff_direc_o3 	 =(-1)
+                                  ,	 relative_angle_o4 	 =(-1)
+                                  ,	 rel_ht_o4 	 =(-1)
+                                  ,	 diff_speed_o5 	 =(-1)
+                                  ,	 rel_wt_o5 	 =(-1)
+                                  ,	 diff_accel_football 	 =(-1)
                                )
                   )
 
@@ -166,7 +166,6 @@ long_data <- x_df_pad %>%
                          ,'rel_wt_o4'
                          ,'diff_accel_o5'
                          ,'rel_bmi_o5'
-                         #,'gameidplayid'
                          ,'relative_distance_d1'
                          ,'diff_direc_d1'
                          ,'relative_angle_d2'
@@ -205,7 +204,6 @@ long_data <- x_df_pad %>%
                          ,'relative_distance_o5'
                          ,'diff_direc_o5'
                          ,'relative_angle_football'
-                         ,'dv'
                          ,'diff_speed_d1'
                          ,'rel_wt_d1'
                          ,'diff_accel_d2'
@@ -266,19 +264,26 @@ X <- array(
 X %>% dim
 
 long_data$variable %>% unique
-
-y<- long_data %>% dplyr::group_by(myid) %>% dplyr::summarise(dv=max(dv)) %>% data.frame %>% dplyr::select(dv) %>% as.matrix()
+n_individuals
+sum(long_data$dv)
+#y<- long_data %>% dplyr::group_by(myid) %>% dplyr::summarise(dv=max(dv)) %>% data.frame %>% dplyr::select(dv) %>% as.matrix()
+y_tmp<- long_data %>% dplyr::select(myid,frameid_new,dv) %>% unique %>% dplyr::arrange(myid,frameid_new,dv)
+View(y_tmp)
+y <- matrix(y_tmp$dv, nrow = n_individuals, ncol = n_timeframes,byrow = TRUE)
 str(y)
-y<- to_categorical(y)
+#y<- to_categorical(y)
 dim(y)
-y %>% head
+y[1:10,1:67]
+y
+sum(y)
+?matrix
 
-y<- long_data %>% dplyr::filter(variable=='dv') %>% dplyr::group_by(myid) %>% dplyr::summarise(dv=max(value)) %>% data.frame %>% dplyr::select(dv) %>% as.matrix()
-long_data %>% 
-  dplyr::filter(variable=='dv') %>%
-  dplyr::group_by(myid) %>% 
-  dplyr::summarise(dv=max(value)) %>% 
-  data.frame %>% 
+#y<- long_data %>% dplyr::filter(variable=='dv') %>% dplyr::group_by(myid) %>% dplyr::summarise(dv=max(value)) %>% data.frame %>% dplyr::select(dv) %>% as.matrix()
+#long_data %>% 
+#  dplyr::filter(variable=='dv') %>%
+#  dplyr::group_by(myid) %>% 
+#  dplyr::summarise(dv=max(value)) %>% 
+#  data.frame %>% 
 
 #---------#
 #- LSTM - #
@@ -289,24 +294,24 @@ model <- keras_model_sequential()
 
 model %>%
   layer_lstm(units = 50, input_shape = c(n_timeframes, n_features)) %>%
-  layer_dense(units = 2,activation = "softmax")
+  layer_dense(units = n_timeframes,activation = "softmax")
 
 # Compile the model
 model %>%
   compile(optimizer = 'adam', 
-          metrics = list( #'binary_accuracy' #
-                           'auc'=tf$keras$metrics$AUC()
+          metrics = list( 'binary_accuracy' #
+                          ,'auc'=tf$keras$metrics$AUC()
                           ,'prec'=tf$keras$metrics$Precision()
                           ,'recall'=tf$keras$metrics$Recall()
           ), 
-          loss = "categorical_crossentropy"  #"sparse_categorical_crossentropy" #   "binary_crossentropy"
+          loss = "binary_crossentropy" # "categorical_crossentropy"  #"sparse_categorical_crossentropy" #   "binary_crossentropy"
   )
 # Print the model summary
 summary(model)
 
 # Fit the model
-model %>% fit(X, y, epochs = 10, batch_size = 100)
-
+model %>% fit(X, y, epochs = 500, batch_size = 10)
+model
 
 #- Generator -#
 ?keras::fit_generator

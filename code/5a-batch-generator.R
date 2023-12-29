@@ -19,10 +19,20 @@ unique_myids_length
 maxframes<- max(dev_lstm_x$frameid_new %>% unique)
 maxframes
 
-batch_size <- 100
-epochs     <- 10
+batch_size <- 500
+epochs     <- 50
 steps_per_epoch <- round(unique_myids_length / batch_size)
 steps_per_epoch
+
+
+#- weights
+dev_lstm_x %>%
+  dplyr::group_by(myid) %>%
+  dplyr::summarise(maxdv=max(dv)) %>%
+  dplyr::group_by(maxdv) %>%
+  tally
+#- 0: 0.5 / (27997/31893) = 0.57
+#- 1: 0.5 / (3896/31893) = 4.0
 
 batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=unique_myids){
 
@@ -45,102 +55,102 @@ batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=uniqu
       dplyr::select(-gameidplayid,-reference_nflid) %>%
       tidyr::complete(  myid
                       , frameid_new = 1:inmax_frames
-                      , fill = list(   diff_orien_d1 	=0
-                                      ,relative_distance_d2 	=0
-                                      ,diff_direc_d2 	=0
-                                      ,relative_angle_d3 	=0
-                                      ,rel_ht_d3 	=0
-                                      ,diff_speed_d4 	=0
-                                      ,rel_wt_d4 	=0
-                                      ,diff_accel_d5 	=0
-                                      ,rel_bmi_d5 	=0
-                                      ,diff_orien_o1 	=0
-                                      ,relative_distance_o2 	=0
-                                      ,diff_direc_o2 	=0
-                                      ,relative_angle_o3 	=0
-                                      ,rel_ht_o3 	=0
-                                      ,diff_speed_o4 	=0
-                                      ,rel_wt_o4 	=0
-                                      ,diff_accel_o5 	=0
-                                      ,rel_bmi_o5 	=0
-                                      ,gameidplayid 	=0
-                                      ,relative_distance_d1 	=0
-                                      ,diff_direc_d1 	=0
-                                      ,relative_angle_d2 	=0
-                                      ,rel_ht_d2 	=0
-                                      ,diff_speed_d3 	=0
-                                      ,rel_wt_d3 	=0
-                                      ,diff_accel_d4 	=0
-                                      ,rel_bmi_d4 	=0
-                                      ,diff_orien_d5 	=0
-                                      ,relative_distance_o1 	=0
-                                      ,diff_direc_o1 	=0
-                                      ,relative_angle_o2 	=0
-                                      ,rel_ht_o2 	=0
-                                      ,diff_speed_o3 	=0
-                                      ,rel_wt_o3 	=0
-                                      ,diff_accel_o4 	=0
-                                      ,rel_bmi_o4 	=0
-                                      ,diff_orien_o5 	=0
-                                      ,relative_distance_football 	=0
-                                      ,relative_angle_d1 	=0
-                                      ,rel_ht_d1 	=0
-                                      ,diff_speed_d2 	=0
-                                      ,rel_wt_d2 	=0
-                                      ,diff_accel_d3 	=0
-                                      ,rel_bmi_d3 	=0
-                                      ,diff_orien_d4 	=0
-                                      ,relative_distance_d5 	=0
-                                      ,diff_direc_d5 	=0
-                                      ,relative_angle_o1 	=0
-                                      ,rel_ht_o1 	=0
-                                      ,diff_speed_o2 	=0
-                                      ,rel_wt_o2 	=0
-                                      ,diff_accel_o3 	=0
-                                      ,rel_bmi_o3 	=0
-                                      ,diff_orien_o4 	=0
-                                      ,relative_distance_o5 	=0
-                                      ,diff_direc_o5 	=0
-                                      ,relative_angle_football 	=0
-                                      ,dv 	=0
-                                      ,diff_speed_d1 	=0
-                                      ,rel_wt_d1 	=0
-                                      ,diff_accel_d2 	=0
-                                      ,rel_bmi_d2 	=0
-                                      ,diff_orien_d3 	=0
-                                      ,relative_distance_d4 	=0
-                                      ,diff_direc_d4 	=0
-                                      ,relative_angle_d5 	=0
-                                      ,rel_ht_d5 	=0
-                                      ,diff_speed_o1 	=0
-                                      ,rel_wt_o1 	=0
-                                      ,diff_accel_o2 	=0
-                                      ,rel_bmi_o2 	=0
-                                      ,diff_orien_o3 	=0
-                                      ,relative_distance_o4 	=0
-                                      ,diff_direc_o4 	=0
-                                      ,relative_angle_o5 	=0
-                                      ,rel_ht_o5 	=0
-                                      ,diff_speed_football 	=0
-                                      ,diff_accel_d1 	=0
-                                      ,rel_bmi_d1 	=0
-                                      ,diff_orien_d2 	=0
-                                      ,relative_distance_d3 	=0
-                                      ,diff_direc_d3 	=0
-                                      ,relative_angle_d4 	=0
-                                      ,rel_ht_d4 	=0
-                                      ,diff_speed_d5 	=0
-                                      ,rel_wt_d5 	=0
-                                      ,diff_accel_o1 	=0
-                                      ,rel_bmi_o1 	=0
-                                      ,diff_orien_o2 	=0
-                                      ,relative_distance_o3 	=0
-                                      ,diff_direc_o3 	=0
-                                      ,relative_angle_o4 	=0
-                                      ,rel_ht_o4 	=0
-                                      ,diff_speed_o5 	=0
-                                      ,rel_wt_o5 	=0
-                                      ,diff_accel_football 	=0
+                      , fill = list(   diff_orien_d1 	=(-1)
+                                      ,relative_distance_d2 	=(-1)
+                                      ,diff_direc_d2 	=(-1)
+                                      ,relative_angle_d3 	=(-1)
+                                      ,rel_ht_d3 	=(-1)
+                                      ,diff_speed_d4 	=(-1)
+                                      ,rel_wt_d4 	=(-1)
+                                      ,diff_accel_d5 	=(-1)
+                                      ,rel_bmi_d5 	=(-1)
+                                      ,diff_orien_o1 	=(-1)
+                                      ,relative_distance_o2 	=(-1)
+                                      ,diff_direc_o2 	=(-1)
+                                      ,relative_angle_o3 	=(-1)
+                                      ,rel_ht_o3 	=(-1)
+                                      ,diff_speed_o4 	=(-1)
+                                      ,rel_wt_o4 	=(-1)
+                                      ,diff_accel_o5 	=(-1)
+                                      ,rel_bmi_o5 	=(-1)
+                                      ,gameidplayid 	=(-1)
+                                      ,relative_distance_d1 	=(-1)
+                                      ,diff_direc_d1 	=(-1)
+                                      ,relative_angle_d2 	=(-1)
+                                      ,rel_ht_d2 	=(-1)
+                                      ,diff_speed_d3 	=(-1)
+                                      ,rel_wt_d3 	=(-1)
+                                      ,diff_accel_d4 	=(-1)
+                                      ,rel_bmi_d4 	=(-1)
+                                      ,diff_orien_d5 	=(-1)
+                                      ,relative_distance_o1 	=(-1)
+                                      ,diff_direc_o1 	=(-1)
+                                      ,relative_angle_o2 	=(-1)
+                                      ,rel_ht_o2 	=(-1)
+                                      ,diff_speed_o3 	=(-1)
+                                      ,rel_wt_o3 	=(-1)
+                                      ,diff_accel_o4 	=(-1)
+                                      ,rel_bmi_o4 	=(-1)
+                                      ,diff_orien_o5 	=(-1)
+                                      ,relative_distance_football 	=(-1)
+                                      ,relative_angle_d1 	=(-1)
+                                      ,rel_ht_d1 	=(-1)
+                                      ,diff_speed_d2 	=(-1)
+                                      ,rel_wt_d2 	=(-1)
+                                      ,diff_accel_d3 	=(-1)
+                                      ,rel_bmi_d3 	=(-1)
+                                      ,diff_orien_d4 	=(-1)
+                                      ,relative_distance_d5 	=(-1)
+                                      ,diff_direc_d5 	=(-1)
+                                      ,relative_angle_o1 	=(-1)
+                                      ,rel_ht_o1 	=(-1)
+                                      ,diff_speed_o2 	=(-1)
+                                      ,rel_wt_o2 	=(-1)
+                                      ,diff_accel_o3 	=(-1)
+                                      ,rel_bmi_o3 	=(-1)
+                                      ,diff_orien_o4 	=(-1)
+                                      ,relative_distance_o5 	=(-1)
+                                      ,diff_direc_o5 	=(-1)
+                                      ,relative_angle_football 	=(-1)
+                                      ,dv 	=(-1)
+                                      ,diff_speed_d1 	=(-1)
+                                      ,rel_wt_d1 	=(-1)
+                                      ,diff_accel_d2 	=(-1)
+                                      ,rel_bmi_d2 	=(-1)
+                                      ,diff_orien_d3 	=(-1)
+                                      ,relative_distance_d4 	=(-1)
+                                      ,diff_direc_d4 	=(-1)
+                                      ,relative_angle_d5 	=(-1)
+                                      ,rel_ht_d5 	=(-1)
+                                      ,diff_speed_o1 	=(-1)
+                                      ,rel_wt_o1 	=(-1)
+                                      ,diff_accel_o2 	=(-1)
+                                      ,rel_bmi_o2 	=(-1)
+                                      ,diff_orien_o3 	=(-1)
+                                      ,relative_distance_o4 	=(-1)
+                                      ,diff_direc_o4 	=(-1)
+                                      ,relative_angle_o5 	=(-1)
+                                      ,rel_ht_o5 	=(-1)
+                                      ,diff_speed_football 	=(-1)
+                                      ,diff_accel_d1 	=(-1)
+                                      ,rel_bmi_d1 	=(-1)
+                                      ,diff_orien_d2 	=(-1)
+                                      ,relative_distance_d3 	=(-1)
+                                      ,diff_direc_d3 	=(-1)
+                                      ,relative_angle_d4 	=(-1)
+                                      ,rel_ht_d4 	=(-1)
+                                      ,diff_speed_d5 	=(-1)
+                                      ,rel_wt_d5 	=(-1)
+                                      ,diff_accel_o1 	=(-1)
+                                      ,rel_bmi_o1 	=(-1)
+                                      ,diff_orien_o2 	=(-1)
+                                      ,relative_distance_o3 	=(-1)
+                                      ,diff_direc_o3 	=(-1)
+                                      ,relative_angle_o4 	=(-1)
+                                      ,rel_ht_o4 	=(-1)
+                                      ,diff_speed_o5 	=(-1)
+                                      ,rel_wt_o5 	=(-1)
+                                      ,diff_accel_football 	=(-1)
                       )
       )
     
@@ -277,16 +287,18 @@ batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=uniqu
 #---------#
 #- LSTM - #
 #---------#
+lstm_model<- NULL
 gc()
 k_clear_session()
-model <- keras_model_sequential()
+lstm_model <- keras_model_sequential()
 
-model %>%
-  layer_lstm(units = 50, input_shape = c(107, 95)) %>%
+lstm_model %>%
+  layer_lstm(units = 64, input_shape = c(107, 95)) %>%
+  #layer_dropout(rate = 0.3) %>% 
   layer_dense(units = 2,activation = "softmax")
 
 # Compile the model
-model %>%
+lstm_model %>%
   compile(optimizer = 'adam', 
           metrics = list( #'binary_accuracy' #
             'auc'=tf$keras$metrics$AUC()
@@ -296,18 +308,19 @@ model %>%
           loss = "categorical_crossentropy"  #"sparse_categorical_crossentropy" #   "binary_crossentropy"
   )
 # Print the model summary
-summary(model)
+summary(lstm_model)
 
 # Fit the model
 ## This code works
 gen <- keras:::as_generator.function(batch_generator( indata=dev_lstm_x
-                                                     ,inbatch_size=100
+                                                     ,inbatch_size=batch_size
                                                      ,inmax_frames=maxframes
                                                      ,inunique_ids=unique_myids))
 
-model %>%
+lstm_model_history<- lstm_model %>%
   keras::fit_generator(gen
                       ,steps_per_epoch = steps_per_epoch
-                      ,epochs = epochs)
+                      ,epochs = epochs
+                      ,class_weight =  list("0"=0.57,"1"=10.0))
 
 
