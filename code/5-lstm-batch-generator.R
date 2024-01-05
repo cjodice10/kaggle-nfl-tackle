@@ -19,10 +19,20 @@ unique_myids_length
 maxframes<- max(dev_lstm_x$frameid_new %>% unique)
 maxframes
 
-batch_size <- 200
-epochs     <- 5
+batch_size <- 300
+epochs     <- 10
 steps_per_epoch <- round(unique_myids_length / batch_size)
 steps_per_epoch
+
+#- create val for lstm
+val_lstm_x<- val_transf %>% 
+  dplyr::mutate(myid = paste0(gameidplayid,"-",reference_nflid))
+
+#- create unique ids for val
+unique_myids_val       <- val_lstm_x$myid %>% unique
+unique_myids_val %>% str
+unique_myids_val_length<- unique_myids_val %>% length
+unique_myids_val_length
 
 #- weights
 dev_lstm_x %>%
@@ -30,9 +40,8 @@ dev_lstm_x %>%
   dplyr::summarise(maxdv=max(dv)) %>%
   dplyr::group_by(maxdv) %>%
   tally
-#- 0: 0.5 / (27997/31893) = 0.57
-#- 1: 0.5 / (3896/31893) = 4.0
 
+#- Batch Generator -#
 batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=unique_myids){
 
   function() {
@@ -251,7 +260,8 @@ batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=uniqu
                               ,'diff_accel_football'
       )
       ,names_to  = "variable"
-      ,values_to = "value")
+      ,values_to = "value") %>% 
+      dplyr::arrange(myid,variable,frameid_new)
     
     #- reshape data for LSTM
     n_individuals<- length(unique(long_data$myid))
@@ -259,15 +269,34 @@ batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=uniqu
     n_features   <- numfeatures  # Number of predictor variables
     
     #- create a 3D array (tensor)
-    X <- array(
-       data = matrix(long_data$value, nrow = n_individuals * n_timeframes * n_features)
-      ,dim  = c(n_individuals, n_timeframes, n_features)
-    )
+    #- split by myid
+    long_dat_split<- split(long_data,f=long_data$myid)
     
+    #- X's
+    X<- lapply(long_dat_split,FUN=function(x){
+      array(x$value,dim=c(1,n_timeframes,n_features))
+    })
+    
+    Xf<- array(NA,dim=c(n_individuals, n_timeframes, n_features))
+    for(i in 1:length(X)){
+      Xf[i,,]<- X[[i]]
+    }
+    
+    #- y's
     y_tmp<- long_data %>% dplyr::select(myid,frameid_new,dv) %>% unique %>% dplyr::arrange(myid,frameid_new,dv)
     y <- matrix(y_tmp$dv, nrow = n_individuals, ncol = n_timeframes,byrow = TRUE)
-
-    list(X,y)
+    
+    y_list<- list()
+    for(i in 1:nrow(y)){
+      y_list[[i]]<- matrix(y[i,])
+    }
+    
+    yf<- array(NA,dim=c(n_individuals, n_timeframes, 1))
+    for(i in 1:length(y_list)){
+      yf[i,,]<- y_list[[i]]
+    }
+    
+    list(Xf,yf)
     
   }#- end function()
   
@@ -279,14 +308,18 @@ batch_generator <- function(indata, inbatch_size,inmax_frames,inunique_ids=uniqu
 #- LSTM - #
 #---------#
 rm(lstm_model)
+
 #gc()
 k_clear_session()
 lstm_model <- keras_model_sequential()
 
 lstm_model %>%
-  layer_lstm(units = 256, input_shape = c(maxframes, 95)) %>%
-  #layer_dropout(rate = 0.3) %>% 
-  layer_dense(units = maxframes,activation = "sigmoid")
+  #layer_lstm(units = 128, input_shape = c(maxframes, 95)) %>%
+  #layer_dense(units = maxframes,activation = "sigmoid")
+  
+  layer_lstm( units = 256,return_sequences = TRUE) %>%
+  layer_dense(units = 128,activation ="relu") %>%
+  layer_dense(units = 1  ,activation = "sigmoid")
 
 # Compile the model
 lstm_model %>%
@@ -303,16 +336,47 @@ summary(lstm_model)
 
 # Fit the model
 ## This code works
-gen <- keras:::as_generator.function(batch_generator( indata=dev_lstm_x
+gen_dev <- keras:::as_generator.function(batch_generator( indata=dev_lstm_x
                                                      ,inbatch_size=batch_size
                                                      ,inmax_frames=maxframes
                                                      ,inunique_ids=unique_myids))
 
+
+gen_val <- keras:::as_generator.function(batch_generator( indata=val_lstm_x
+                                                          ,inbatch_size=batch_size
+                                                          ,inmax_frames=maxframes
+                                                          ,inunique_ids=unique_myids_val))
+
+
 lstm_model_history<- lstm_model %>%
-  keras::fit_generator(gen
+  keras::fit_generator(gen_dev
                       ,steps_per_epoch = steps_per_epoch
                       ,epochs = epochs
-                      ,weight_class =  list("0"=0.57,"1"=5.0)
+                      ,max_queue_size = 10
+                      ,class_weight = list(0.57,5.0)
+                      ,validation_data = gen_val
                       )
-?keras::fit
+lstm_model_history
+
+#- save model
+save_model_hdf5(model,paste0(getwd(),"/model/model-prob-tackle-lstm.hdf5"))
+
+#-------------------#
+#- get predictions -#
+#-------------------#
+#- DEV
+dev_pred_probs                  <- round(lstm_model %>% predict_generator(gen_dev,steps=nrow(dev_lstm_x)) %>% data.frame %>% dplyr::rename(prob_tackle=X2) %>% dplyr::select(prob_tackle),4)
+dev_pred_probs$dv               <- dev_transf[,"dv"]
+dev_pred_probs$gameidplayid     <- dev_transf[,"gameidplayid"]
+dev_pred_probs$reference_nflid  <- dev_transf[,"reference_nflid"]
+dev_pred_probs$frameid_new      <- dev_transf[,"frameid_new"]
+dev_pred_probs$gameidplayidnflid<- dev_transf[,"gameidplayidnflid"]
+
+#- VAL
+val_pred_probs                  <- round(model %>% predict_generator(gen_dev,steps=nrow(dev_lstm_x)) %>% data.frame %>% dplyr::rename(prob_tackle=X2) %>% dplyr::select(prob_tackle),4)
+val_pred_probs$dv               <- val_transf[,"dv"]
+val_pred_probs$gameidplayid     <- val_transf[,"gameidplayid"]
+val_pred_probs$reference_nflid  <- val_transf[,"reference_nflid"]
+val_pred_probs$frameid_new      <- val_transf[,"frameid_new"]
+val_pred_probs$gameidplayidnflid<- val_transf[,"gameidplayidnflid"]
 
